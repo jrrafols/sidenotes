@@ -14,11 +14,11 @@ document.addEventListener( "DOMContentLoaded", function(){
     }
   });
 
-  document.querySelector('.dropbox-signout').addEventListener('click', function(e){
+  /*document.querySelector('.dropbox-signout').addEventListener('click', function(e){
     e.preventDefault();
     appController.signOut();
     window.close();
-  });
+  });*/
 
   document.querySelector('#note-search').addEventListener('search', function(){
     if (document.querySelector("#note-search").value === ""){ displayResults(formattedRecords, addActionToNoteLink); }

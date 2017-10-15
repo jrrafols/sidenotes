@@ -1,12 +1,12 @@
-var DROPBOX_APP_KEY = 'mpbhh63q8ya3ctd';
+//var DROPBOX_APP_KEY = 'mpbhh63q8ya3ctd';
 
 var currentTable, openDatastore;
 
 var local_storage = chrome.storage.local;
-var client = new Dropbox.Client({key: DROPBOX_APP_KEY});
+//var client = new Dropbox.Client({key: DROPBOX_APP_KEY});
 var hashConverter = new Hashes.SHA1;
 
-client.onAuthStepChange.addListener(function(event) {
+/*client.onAuthStepChange.addListener(function(event) {
   if (client.isAuthenticated()) {
     initDatastore(datastoreController.syncRemoteStorage);
   }
@@ -16,7 +16,7 @@ client.authenticate({interactive:false}, function (error) {
   if (error) {
     client.reset();
   }
-});
+});*/
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   if(tab){ appController.checkForNote(tab);}
@@ -28,25 +28,31 @@ chrome.tabs.onCreated.addListener(function(tabId, changeInfo, tab) {
 
 appController = {
   isAuthenticated: function(){
-    return client.isAuthenticated();
+    return true;
+    //return client.isAuthenticated();
   },
   authenticate: function(){
-    client.authenticate(function(error){
+    /*client.authenticate(function(error){
       if(error){
         client.reset();
       } else {
         chrome.tabs.create({url: "http://sidenotes.co/tutorial"}, function(tab){
           appController.toggleSidePanel();});
       }
-    });
+    });*/
+    chrome.tabs.create({url: "http://sidenotes.co/tutorial"}, function(tab){
+          appController.toggleSidePanel();});
   },
   signOut: function(){
-    client.signOut(null, function(){
+    /*client.signOut(null, function(){
       client.reset();
       appController.closeAllSidePanels();
       appController.changeAllIconsToNormal();
       local_storage.clear();
-    });
+    });*/
+    appController.closeAllSidePanels();
+      appController.changeAllIconsToNormal();
+      local_storage.clear();
   },
   closeAllSidePanels: function(){
     chrome.tabs.query( {} ,function (tabs) {
@@ -194,7 +200,7 @@ datastoreController = {
 };
 
 function initDatastore(callback){
-  client.getDatastoreManager().openDefaultDatastore(function (error, datastore) {
+  /*client.getDatastoreManager().openDefaultDatastore(function (error, datastore) {
     if (error) {
       console.log('Error opening default datastore: ' + error);
     }
@@ -221,5 +227,19 @@ function initDatastore(callback){
     var datastoreRecords = currentTable.query();
     datastoreController.setRemoteNoteToLocalStorage(datastoreRecords);
     callback(currentTable);
-  });
+  });*/
+  chrome.storage.onChanged.addListener(function(changes, namespace) {
+      var hashKey = Object.keys(changes)[0];
+      if(changes[hashKey]['newValue'] && changes[hashKey]['newValue']['url'] && changes[hashKey]['newValue']['body']){
+        var existingRecord = currentTable.query({url: changes[hashKey]['newValue']['url'] });
+        datastoreController.updateOrAddRecord(changes, existingRecord[0], hashKey);
+
+        chrome.tabs.query({currentWindow: true, active: true}, function(tab){
+          if(tab[0]){
+            appController.checkForNote(tab[0]);
+          }
+        });
+
+      }
+    });
 };
