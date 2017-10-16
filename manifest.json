@@ -16,7 +16,6 @@
     "default_popup": "html/popup.html"
   },
   "web_accessible_resources": [
-    "chrome_oauth_receiver.html",
     "html/sidepanel.html",
     "html/options.html"
   ],

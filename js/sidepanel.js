@@ -3,6 +3,7 @@ var hashConverter = new Hashes.SHA1;
 var noteKey = hashConverter.hex(currentUrl);
 
 document.addEventListener( "DOMContentLoaded", function(){
+  //debugger;
   var textarea = document.querySelector('#textarea');
   var indicator = document.querySelector('#sync-indicator');
   displayStoredData();

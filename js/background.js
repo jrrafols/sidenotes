@@ -51,8 +51,7 @@ appController = {
       local_storage.clear();
     });*/
     appController.closeAllSidePanels();
-      appController.changeAllIconsToNormal();
-      local_storage.clear();
+    appController.changeAllIconsToNormal();
   },
   closeAllSidePanels: function(){
     chrome.tabs.query( {} ,function (tabs) {
